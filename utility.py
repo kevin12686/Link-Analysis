@@ -3,6 +3,12 @@ import re
 
 
 class Point:
+    def updatePagerank(self):
+        self.pagerank = self.newpagerank
+
+    def newPagerank(self, val):
+        self.newpagerank = val
+
     def connectTo(self, point):
         self.linkTo.add(point)
         point.connectFrom(self)
@@ -10,12 +16,13 @@ class Point:
     def connectFrom(self, point):
         self.linkFrom.add(point)
 
-    def __init__(self, identification, auth=1, hub=1):
+    def __init__(self, identification, auth=1, hub=1, pagerank=1):
         self.identification = identification
         self.linkTo = set()
         self.linkFrom = set()
         self.auth = auth
         self.hub = hub
+        self.pagerank = pagerank
 
     def __repr__(self):
         return "<utility.Point object (id: {}, auth: {}, hub: {})>".format(self.identification, self.auth, self.hub)
@@ -30,9 +37,27 @@ class Point:
 class Graph:
     Pattern = re.compile(r"(\d+),(\d+)")
 
-    def print(self):
+    def print_simrank(self):
+        print("SimRank")
+
+    def print_pagerank(self):
+        print("PageRank")
         for p in self.iterpoints():
-            print("ID: {} --> (Auth: {}, Hub: {})".format(p.identification, p.auth, p.hub))
+            print("ID: {} --> {}".format(p.identification, float(p.pagerank)))
+
+    def initPagerank(self):
+        for p in self.iterpoints():
+            p.newPagerank(1 / self.__len__())
+        self.updateAllPagerank()
+
+    def updateAllPagerank(self):
+        for p in self.iterpoints():
+            p.updatePagerank()
+
+    def print_hit(self):
+        print("HITS")
+        for p in self.iterpoints():
+            print("ID: {} --> (Auth: {}, Hub: {})".format(p.identification, float(p.auth), float(p.hub)))
 
     def iterpoints(self):
         return self.points
@@ -61,3 +86,6 @@ class Graph:
             if self.points[idx].identification == identification:
                 return self.points[idx]
         raise KeyError
+
+    def __len__(self):
+        return len(self.points)

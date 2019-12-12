@@ -2,7 +2,7 @@ from utility import Graph
 import math
 
 
-def hits(graph, epsilon=0.15):
+def hits(graph, epsilon=0.1):
     auth_current = 1
     hub_current = 1
     while True:
@@ -22,7 +22,29 @@ def hits(graph, epsilon=0.15):
             break
 
 
+def pagerank(graph, epsilon=0.1):
+    graph.initPagerank()
+    while True:
+        pagerank_old = [p.pagerank for p in graph.iterpoints()]
+        for point in graph.iterpoints():
+            point.newPagerank(sum(p.pagerank / len(p.linkTo) for p in point.linkFrom))
+        graph.updateAllPagerank()
+        pagerank_current = [p.pagerank for p in graph.iterpoints()]
+        if sum(pagerank_old[i] - pagerank_current[i] for i in range(len(pagerank_current))) < epsilon:
+            break
+
+
+def simrank(graph, C=0.9):
+    pass
+
+
 if __name__ == '__main__':
-    graph = Graph("dataset/graph_4.txt")
+    graph = Graph("dataset/graph_1.txt")
     hits(graph)
-    graph.print()
+    graph.print_hit()
+    print("---")
+    pagerank(graph)
+    graph.print_pagerank()
+    print("---")
+    simrank(graph)
+    graph.print_simrank()
