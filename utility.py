@@ -27,6 +27,9 @@ class Point:
     def __repr__(self):
         return "<utility.Point object (id: {}, auth: {}, hub: {})>".format(self.identification, self.auth, self.hub)
 
+    def __str__(self):
+        return self.identification
+
     def __hash__(self):
         return hash(self.identification)
 
@@ -37,13 +40,10 @@ class Point:
 class Graph:
     Pattern = re.compile(r"(\d+),(\d+)")
 
-    def print_simrank(self):
-        print("SimRank")
-
     def print_pagerank(self):
         print("PageRank")
         for p in self.iterpoints():
-            print("ID: {} --> {}".format(p.identification, float(p.pagerank)))
+            print("ID: {} --> {}".format(p, float(p.pagerank)))
 
     def initPagerank(self):
         for p in self.iterpoints():
@@ -57,10 +57,19 @@ class Graph:
     def print_hit(self):
         print("HITS")
         for p in self.iterpoints():
-            print("ID: {} --> (Auth: {}, Hub: {})".format(p.identification, float(p.auth), float(p.hub)))
+            print("ID: {} --> (Auth: {}, Hub: {})".format(p, float(p.auth), float(p.hub)))
 
     def iterpoints(self):
         return self.points
+
+    def index(self, idx):
+        return self.points[idx]
+
+    def indexOf(self, point):
+        for i in range(len(self.points)):
+            if self.points[i] == point:
+                return i
+        return -1
 
     def get_or_create(self, identification):
         created = False
