@@ -3,42 +3,6 @@ import numpy as np
 import math
 
 
-class simrank:
-    def __init__(self, graph, c=0.9):
-        self.table = dict()
-        self.graph = graph
-        self.c = c
-
-    def similarity(self, point1, point2):
-        hash_val = hash(str(point1) + str(point2))
-        if hash_val in self.table.keys():
-            return self.table[hash_val][2]
-        if len(point1.linkFrom) == 0 or len(point2.linkFrom) == 0:
-            self.table[hash_val] = (point1, point2, 0)
-            return self.table[hash_val][2]
-        _sum = 0
-        for p1 in point1.linkFrom:
-            for p2 in point2.linkFrom:
-                _sum += self.similarity(p1, p2)
-        self.table[hash_val] = (point1, point2, self.c * _sum / len(point1.linkFrom) / len(point2.linkFrom))
-        return self.table[hash_val][2]
-
-    def calculate(self):
-        self.table = dict()
-        for i in range(len(self.graph)):
-            for j in range(i, len(self.graph)):
-                p1 = self.graph.index(i)
-                p2 = self.graph.index(j)
-                hash_val = hash(str(p1) + str(p2))
-                if hash_val not in self.table.keys():
-                    self.table[hash_val] = (p1, p2, self.similarity(p1, p2))
-
-    def print_result(self):
-        print("SimRank")
-        for val in self.table.values():
-            print("S({}, {}) --> {}".format(val[0], val[1], val[2]))
-
-
 def hits(graph, epsilon=0.1):
     auth_current = 1
     hub_current = 1
@@ -71,7 +35,7 @@ def pagerank(graph, epsilon=0.1):
             break
 
 
-def simrank_(graph, c=0.8, epsilon=0.1, show=False):
+def simrank(graph, c=0.8, epsilon=0.1, show=False):
     sim = np.identity(len(graph))
     while True:
         sim_old = np.copy(sim)
@@ -109,4 +73,4 @@ if __name__ == '__main__':
     pagerank(graph)
     graph.print_pagerank()
     print("---")
-    simrank_(graph, show=True)
+    simrank(graph, show=True)
