@@ -31,7 +31,7 @@ def pagerank(graph, epsilon=0.1):
             point.newPagerank(sum(p.pagerank / len(p.linkTo) for p in point.linkFrom))
         graph.updateAllPagerank()
         pagerank_current = [p.pagerank for p in graph.iterpoints()]
-        if sum(pagerank_old[i] - pagerank_current[i] for i in range(len(pagerank_current))) < epsilon:
+        if sum(abs(pagerank_old[i] - pagerank_current[i]) for i in range(len(pagerank_current))) < epsilon:
             break
 
 
@@ -51,7 +51,7 @@ def simrank(graph, c=0.8, epsilon=0.1, show=False):
                             l = graph.indexOf(pp2)
                             sum_ += sim_old[k][l]
                     sim[i][j] = sum_ * c / len(p1.linkFrom) / len(p2.linkFrom)
-        if np.linalg.det(np.subtract(sim_old, sim)) < epsilon:
+        if sum(abs(n) for n in np.subtract(sim_old, sim).flatten()) / 2 < epsilon:
             break
 
     if show:
